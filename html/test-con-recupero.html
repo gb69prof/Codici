@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Test Interattivo – Libera Edizioni</title>
+<style>
+  :root{
+    --brand:#4c7df0;
+    --brand-d:#345edb;
+    --paper:#ffffff;
+    --bg:#f5f7fb;
+    --ink:#1f2937;
+    --muted:#6b7280;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --bad:#ef4444;
+    --chip:#eef3ff;
+    --card:#fafbff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
+    line-height:1.45;
+  }
+  header{
+    background:linear-gradient(135deg,var(--brand),var(--brand-d));
+    color:white;padding:28px 18px;text-align:center;
+  }
+  header h1{margin:0 0 6px 0;font-size:1.9rem}
+  header p{margin:0;opacity:.95}
+  .wrap{max-width:960px;margin:-32px auto 48px;background:var(--paper);
+    border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.07); padding:20px;
+  }
+  .question{background:#f8fbff;border:1px solid #e7efff;border-left:6px solid var(--brand);
+    border-radius:12px;padding:14px;margin:14px 0}
+  .question p{margin:0 0 10px 0;font-weight:600}
+  .answers label{display:block;margin:8px 0;padding:10px 12px;border-radius:10px;
+    border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+  .answers input{margin-right:8px}
+  .answers label:hover{background:#f3f7ff}
+  button{display:block;margin:30px auto;padding:12px 25px;font-size:16px;border:none;
+    border-radius:8px;background:var(--brand);color:white;cursor:pointer;transition:0.3s;}
+  button:hover{background:var(--brand-d)}
+  .result{text-align:center;font-size:20px;margin-top:30px;}
+  .report{background:#fafafa;border-radius:10px;padding:15px;margin-top:20px;line-height:1.5;}
+  .wrong{background:#fff7f7;border:1px solid #fee2e2;border-left:6px solid var(--bad);
+    border-radius:12px;padding:12px;margin:12px 0}
+  .wrong h5{margin:0 0 6px 0}
+  .why{color:#991b1b;margin:4px 0}
+  .theory{background:#fff;border:1px dashed #fecaca;padding:10px;border-radius:10px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧠 Test con lezione di recupero</h1>
+<div class="question" data-correct="b" data-recovery="Verga è il principale esponente del Verismo italiano. 'I Malavoglia' (1881) racconta la vita di una famiglia di pescatori di Aci Trezza.">
+<p><strong>1. Chi ha scritto “I Malavoglia”?</strong></p>
+<div class="answers">
+<label><input type="radio" name="q1" value="a"> Luigi Pirandello</label>
+<label><input type="radio" name="q1" value="b"> Giovanni Verga</label>
+<label><input type="radio" name="q1" value="c"> Gabriele D’Annunzio</label>
+</div>
+</div>
+<div class="question" data-correct="c" data-recovery="Dante (1265–1321) visse tra il XIII e il XIV secolo; la sua opera maggiore è la Commedia.">
+<p><strong>2. In che secolo è vissuto Dante Alighieri?</strong></p>
+<div class="answers">
+<label><input type="radio" name="q2" value="a"> XVI secolo</label>
+<label><input type="radio" name="q2" value="b"> XVIII secolo</label>
+<label><input type="radio" name="q2" value="c"> XIII-XIV secolo</label>
+</div>
+</div>
+<button onclick="submitTest()">Verifica Risposte</button>
+<div class="result" id="result"></div>
+<div class="report" id="report"></div>
+</div>
+<script>
+function submitTest(){
+  const questions=document.querySelectorAll('.question');
+  let correct=0;let wrong=0;let reportText='';
+  questions.forEach((q,index)=>{
+    const correctAnswer=q.dataset.correct;
+    const selected=q.querySelector('input[type=radio]:checked');
+    const recovery=q.dataset.recovery;
+    if(selected){
+      if(selected.value===correctAnswer){correct++;}
+      else{
+        wrong++;
+        const correctLabel=q.querySelector(`input[value=${correctAnswer}]`).parentElement.textContent.trim();
+        reportText+=`<div class="wrong"><h5>❌ Domanda ${index+1}</h5><div class="why"><strong>Risposta errata.</strong></div><div>✔️ <strong>Risposta corretta:</strong> ${correctLabel}</div><div class="theory"><strong>Richiamo teorico:</strong> ${recovery}</div></div>`;
+      }
+    }else{
+      reportText+=`<p>⚠️ Domanda ${index+1}: nessuna risposta selezionata.</p>`;
+    }
+  });
+  const total=questions.length;
+  const voto=Math.round((correct/total)*10);
+  let giudizio='';
+  if(voto>=9)giudizio='🌟 Ottimo';
+  else if(voto>=7)giudizio='👍 Buono';
+  else if(voto>=6)giudizio='🙂 Sufficiente';
+  else giudizio='💡 Da migliorare';
+  document.getElementById('result').innerHTML=`Hai risposto correttamente a <strong>${correct}</strong> su ${total} domande.<br>Voto: <strong>${voto}/10</strong> – ${giudizio}`;
+  document.getElementById('report').innerHTML=reportText||'✅ Tutte corrette! Ottimo lavoro!';
+}
+</script>
+</body>
+</html>
